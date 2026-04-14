@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Finn din neste bok – Tarkon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    /* iOS Safari fixes */
+    button { cursor: pointer; -webkit-appearance: none; appearance: none; }
+    a { -webkit-touch-callout: none; }
+    * { -webkit-tap-highlight-color: transparent; }
+    /* Prevent iOS font size inflation */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { background: #ede4dd; }
+    body {
+      min-height: 100%;
+      background: #ede4dd;
+      padding: 2rem 1rem 3rem;
+      font-family: 'Lato', sans-serif;
+    }
+    @media (max-width: 600px) {
+      body { padding: 1.2rem 1rem 2rem; }
+    }
+
+    #tk {
+      background: #f6eae4; color: #1e3940; font-family: 'Lato', sans-serif;
+      border-radius: 12px;
+      width: 100%; max-width: 520px;
+      box-shadow: 0 4px 32px rgba(30,57,64,.10);
+      overflow: hidden;
+      margin: 0 auto;
+    }
+
+    /* INTRO */
+    #v-intro { padding: 1.8rem 2rem 1.7rem; }
+    .tk-h1 { font-family: 'EB Garamond', Georgia, serif; font-size: 24px; font-weight: 700; color: #1e3940; line-height: 1.2; margin-bottom: .35rem; }
+    .tk-lead { font-size: 13px; color: #1e3940; opacity: .7; margin-bottom: 1.3rem; line-height: 1.6; }
+    .tk-intro-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    #tk button.tk-start-btn {
+      font-family: 'Lato', sans-serif; font-size: 13px;
+      background: #ffffff; color: #1e3940;
+      border: 0.5px solid rgba(30,57,64,.3); border-radius: 4px;
+      padding: .6rem 1.6rem; cursor: pointer; flex-shrink: 0;
+      transition: background .2s; -webkit-tap-highlight-color: transparent;
+    }
+    #tk button.tk-start-btn:hover, #tk button.tk-start-btn:active { background: #f0ebe8; }
+    .tk-brand { display: flex; align-items: center; gap: .55rem; flex-shrink: 0; }
+    .tk-utviklet { font-family: 'EB Garamond', serif; font-size: 13px; font-style: italic; color: #1e3940; opacity: .55; white-space: nowrap; }
+    .tk-logo-wrap svg { display: block; }
+
+    /* QUESTION */
+    #v-question { padding: 1.8rem 2rem 1.7rem; }
+    .tk-progress { display: flex; gap: 5px; margin-bottom: 1.4rem; }
+    .tk-dot { height: 2px; flex: 1; background: rgba(30,57,64,.12); border-radius: 2px; transition: background .4s; }
+    .tk-dot.done { background: #1e3940; }
+    .tk-dot.active { background: rgba(30,57,64,.45); }
+    .tk-nav { display: flex; align-items: center; margin-bottom: 1.2rem; }
+    #tk button.tk-back {
+      font-family: 'Lato', sans-serif; font-size: 12px; color: #1e3940; opacity: .6;
+      background: transparent; border: none; cursor: pointer; padding: 0;
+      display: flex; align-items: center; gap: 5px;
+      transition: opacity .2s; -webkit-tap-highlight-color: transparent;
+    }
+    #tk button.tk-back:hover { opacity: 1; }
+    #tk button.tk-back svg { width: 12px; height: 12px; }
+    .tk-step-label { font-size: 11px; color: #1e3940; opacity: .6; margin-left: auto; letter-spacing: .1em; }
+    .tk-q { font-family: 'EB Garamond', serif; font-size: 22px; font-weight: 700; color: #1e3940; line-height: 1.2; margin-bottom: 1.2rem; }
+    @media (max-width: 380px) { .tk-q { font-size: 19px; } }
+
+    .tk-answers { display: flex; flex-direction: column; gap: .55rem; }
+    .tk-answer-row { display: flex; align-items: stretch; }
+    #tk button.tk-answer-btn {
+      flex: 1; padding: .85rem 1rem;
+      background: #ffffff !important;
+      border: 0.5px solid rgba(30,57,64,.18) !important;
+      border-right: none !important; border-radius: 6px 0 0 6px;
+      cursor: pointer; text-align: left;
+      font-family: 'EB Garamond', serif; font-size: 15px; font-weight: 700;
+      color: #1e3940 !important; line-height: 1.25; transition: background .18s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    @media (max-width: 380px) { #tk button.tk-answer-btn { font-size: 14px; } }
+    #tk button.tk-answer-btn:hover,
+    #tk button.tk-answer-btn:active { background: #f2eeec !important; }
+    #tk button.tk-answer-btn.sel {
+      background: #1e3940 !important; border-color: #1e3940 !important; color: #f6eae4 !important;
+    }
+
+    .tk-hint-wrap { position: relative; flex-shrink: 0; }
+    #tk button.tk-hint-btn {
+      width: 42px; height: 100%;
+      background: #ffffff !important;
+      border: 0.5px solid rgba(30,57,64,.18) !important;
+      border-left: 0.5px solid rgba(30,57,64,.08) !important;
+      border-radius: 0 6px 6px 0;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: #1e3940; opacity: .45; padding: 0;
+      transition: opacity .2s, background .18s; -webkit-tap-highlight-color: transparent;
+    }
+    #tk button.tk-hint-btn:hover,
+    #tk button.tk-hint-btn:active { opacity: 1; background: #f2eeec !important; }
+    #tk button.tk-hint-btn svg { width: 20px; height: 20px; }
+
+    .tk-tooltip {
+      display: none; position: absolute;
+      right: calc(100% + 8px); top: 50%; transform: translateY(-50%);
+      background: #1e3940; color: #f6eae4; border-radius: 5px;
+      padding: .55rem .8rem; font-size: 11px; line-height: 1.6;
+      width: 190px; z-index: 20; pointer-events: none;
+    }
+    .tk-tooltip::after {
+      content: ''; position: absolute; top: 50%; left: 100%; transform: translateY(-50%);
+      border: 5px solid transparent; border-left-color: #1e3940;
+    }
+    .tk-hint-wrap:hover .tk-tooltip,
+    .tk-hint-wrap.tip-open .tk-tooltip { display: block; }
+
+    .tk-quote { margin-top: 1.6rem; padding-top: 1.4rem; border-top: 0.5px solid rgba(30,57,64,.15); text-align: center; }
+    .tk-quote-text { font-family: 'EB Garamond', serif; font-size: 15px; font-style: italic; color: #1e3940; opacity: .78; line-height: 1.7; max-width: 34em; margin: 0 auto; }
+    .tk-quote-author { font-family: 'Lato', sans-serif; font-size: 11px; color: #1e3940; opacity: .55; margin-top: .5rem; letter-spacing: .04em; }
+
+    /* RESULTS */
+    #v-results { padding: 1.8rem 0 1.7rem; }
+    .tk-res-nav { padding-left: 2rem; padding-right: 2rem; margin-bottom: 1.1rem; }
+    .tk-res-label { font-family: 'EB Garamond', serif; font-size: 20px; font-weight: 700; color: #1e3940; opacity: .9; margin-bottom: .45rem; line-height: 1.25; padding-left: 2rem; padding-right: 2rem; }
+    .tk-res-intro { font-family: 'Lato', sans-serif; font-size: 12.5px; color: #1e3940; opacity: .65; line-height: 1.65; margin-bottom: 1.3rem; padding-left: 2rem; padding-right: 2rem; }
+    .tk-sec-label { font-family: 'EB Garamond', serif; font-size: 16px; font-weight: 700; color: #1e3940; opacity: .7; margin-bottom: .7rem; padding-left: 2rem; padding-right: 2rem; }
+    .tk-bottom-wrap { padding-left: 2rem; padding-right: 2rem; }
+
+    .tk-books {
+      display: flex; gap: .8rem; overflow-x: auto;
+      padding: 0 2rem 8px; margin-bottom: 1.4rem;
+      scrollbar-width: thin; scrollbar-color: rgba(30,57,64,.2) transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+    .tk-books::-webkit-scrollbar { height: 3px; }
+    .tk-books::-webkit-scrollbar-thumb { background: rgba(30,57,64,.2); border-radius: 2px; }
+
+    #tk a.tk-book {
+      flex: 0 0 auto; width: 152px;
+      background: #ffffff !important;
+      border: 0.5px solid rgba(30,57,64,.12); border-radius: 6px;
+      overflow: hidden; display: flex; flex-direction: column;
+      text-decoration: none; color: #1e3940; transition: transform .2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #tk a.tk-book:hover { transform: translateY(-3px); }
+
+    .tk-cover-frame {
+      width: 100%; background: #ffffff; padding: 8px 8px 4px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .tk-cover-inner {
+      width: 100%; height: 170px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; background: #ffffff; border-radius: 2px; overflow: hidden;
+    }
+    .tk-book-cover { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
+    .tk-book-cover-fb {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-family: 'EB Garamond', serif; font-size: 13px; font-weight: 700;
+      color: rgba(255,255,255,.92); text-align: center; padding: 1rem; line-height: 1.3;
+      background: inherit;
+    }
+
+    .tk-book-body { padding: .65rem .8rem .75rem; display: flex; flex-direction: column; gap: .18rem; flex: 1; }
+    .tk-book-genre { font-size: 9px; letter-spacing: .1em; color: #1e3940; opacity: .5; }
+    .tk-book-title { font-family: 'EB Garamond', serif; font-size: 14px; font-weight: 700; line-height: 1.2; color: #1e3940; }
+    .tk-book-author { font-size: 11px; color: #1e3940; opacity: .6; }
+    .tk-book-desc { font-size: 11px; color: #1e3940; opacity: .75; line-height: 1.5; flex: 1; margin-top: 3px; }
+    #tk button.tk-book-more {
+      font-size: 10px; color: #1e3940; opacity: .5;
+      background: transparent; border: none; cursor: pointer; padding: 0;
+      text-decoration: underline; text-underline-offset: 2px;
+      text-align: left; margin-top: 5px; transition: opacity .2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #tk button.tk-book-more:hover { opacity: .9; }
+    .tk-book-expanded { display: none; font-size: 11px; color: #1e3940; opacity: .68; line-height: 1.55; border-top: 0.5px solid rgba(30,57,64,.1); padding-top: .5rem; margin-top: .3rem; }
+    .tk-book-expanded.open { display: block; }
+
+    .tk-sec-label { font-family: 'EB Garamond', serif; font-size: 16px; font-weight: 700; color: #1e3940; opacity: .7; margin-bottom: .7rem; }
+    .tk-sec-books {
+      display: flex; gap: .65rem; overflow-x: auto;
+      padding: 0 2rem 6px; margin-bottom: 1.3rem;
+      scrollbar-width: thin; scrollbar-color: rgba(30,57,64,.15) transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+    .tk-sec-books::-webkit-scrollbar { height: 2px; }
+    .tk-sec-books::-webkit-scrollbar-thumb { background: rgba(30,57,64,.15); border-radius: 2px; }
+
+    #tk a.tk-sec-book {
+      flex: 0 0 auto; width: 126px;
+      background: rgba(255,255,255,.6) !important;
+      border: 0.5px solid rgba(30,57,64,.1); border-radius: 6px;
+      overflow: hidden; display: flex; flex-direction: column;
+      text-decoration: none; color: #1e3940; transition: transform .2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #tk a.tk-sec-book:hover { transform: translateY(-2px); background: #ffffff !important; }
+
+    .tk-sec-cover-frame { width: 100%; background: #ffffff; padding: 6px 6px 3px; display: flex; align-items: center; justify-content: center; }
+    .tk-sec-cover-inner { width: 100%; height: 135px; display: flex; align-items: center; justify-content: center; position: relative; background: #ffffff; border-radius: 2px; overflow: hidden; }
+
+    .tk-sec-body { padding: .55rem .65rem .65rem; display: flex; flex-direction: column; gap: .12rem; }
+    .tk-sec-genre { font-size: 8px; letter-spacing: .1em; color: #1e3940; opacity: .4; }
+    .tk-sec-title { font-family: 'EB Garamond', serif; font-size: 12px; font-weight: 700; line-height: 1.2; color: #1e3940; }
+    .tk-sec-author { font-size: 10px; color: #1e3940; opacity: .5; }
+    .tk-sec-desc { font-size: 10px; color: #1e3940; opacity: .62; line-height: 1.45; margin-top: 2px; }
+
+    .tk-bottom { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; padding-bottom: 0; }
+    #tk button.tk-reset {
+      font-size: 12px; color: #1e3940; opacity: .55;
+      background: transparent; border: 0.5px solid rgba(30,57,64,.25); border-radius: 4px;
+      padding: .4rem 1rem; cursor: pointer; transition: opacity .2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #tk button.tk-reset:hover { opacity: 1; }
+    .tk-shop-link { font-size: 12px; color: #1e3940; opacity: .65; text-decoration: underline; text-underline-offset: 2px; }
+    .tk-shop-link:hover { opacity: 1; }
+
+    .tk-view { display: none; }
+    .tk-view.on { display: block; }
+    @keyframes tkFade { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+    .tk-fade { animation: tkFade .32s ease forwards; }
+  </style>
+</head>
+<body>
+<div id="tk">
+  <div id="v-intro" class="tk-view on">
+    <h1 class="tk-h1">Finn din neste bok</h1>
+    <p class="tk-lead">Fire spørsmål. Bøker som treffer det du faktisk er ute etter.</p>
+    <div class="tk-intro-row">
+      <button class="tk-start-btn" id="tk-start-btn" onclick="tkStart()">Kom i gang →</button>
+      <div class="tk-brand">
+        <span class="tk-utviklet">Utviklet av</span>
+        <div class="tk-logo-wrap" id="tk-logo-wrap">
+          <svg viewBox="0 0 283.5 141.7" xmlns="http://www.w3.org/2000/svg">
+            <style>.st0{fill:#1F383F;}.st1{fill:#1F3940;}</style>
+            <path class="st0" d="M71,73.1c0,14.1-11.5,25.6-25.6,25.6S19.8,87.2,19.8,73.1s11.5-25.6,25.6-25.6C59.6,47.5,71,59,71,73.1z M44.8,55L44.8,55c-3.7,0-7,2.5-7.9,6.1l-3.7,14.9c10.2,6.3,9.9,16.6,9.9,16.6h1.7V77.8c-1.9-0.3-3.4-1.9-3.4-3.9s1.5-3.6,3.4-3.9C44.8,69.9,44.8,55,44.8,55z M45.9,92.7h1.7c0,0-0.4-10.3,9.9-16.6l-3.7-14.9c-0.9-3.6-4.1-6.1-7.9-6.1l0,0v14.9c1.9,0.3,3.4,1.9,3.4,3.9c0,2-1.5,3.6-3.4,3.9C45.9,77.7,45.9,92.7,45.9,92.7z"/>
+            <path class="st1" d="M105.7,58.9h-6.4v28c0,5.1,2.3,5.7,2.8,5.8H90.1c0.5-0.1,2.8-0.6,2.8-5.8v-28h-7c-4,0-4.9,2.2-6.1,4.9c0.3-3,0.5-5.9,0.7-8.9h31.3l0.7,8.9C111.5,61,110.4,58.9,105.7,58.9z"/>
+            <path class="st1" d="M130.9,93.9c-2.1-0.3-4-2.3-4.4-3.9c-1.4,2.3-4.8,3.5-8.1,3.5c-4.3,0-7.7-2.4-7.7-6.6c0-4.1,4.8-7.9,14.9-10.2v-2.6c0-3.8-1.5-5.6-4.4-5.6c-3.3,0-4.8,1.7-4.8,3.4c0,1.1,0.5,1.9,1.3,2.2l-5.8,2.3c-0.3-0.8-0.7-1.9-0.7-3.1c0-4.5,4.5-8.1,10.8-8.1c6.6,0,9.3,3.5,9.3,8.2v11.5c0,3.1,1.4,5.3,4.3,5.3c0.2,0,0.5-0.1,0.7-0.1L130.9,93.9z M125.7,79.9c-6.6,1.5-9.5,3.6-9.5,6.3c0,2.2,1.8,3.8,4.1,3.8c2.7,0,5.4-2,5.4-5L125.7,79.9z"/>
+            <path class="st1" d="M150.8,70.6c-3,0-5.8,3.4-5.8,9.8v6.9c0,4.7,2,5.4,2.6,5.4h-10.6c0.4-0.1,2.5-0.6,2.5-5.4V73.2c0-3.9-1.2-4.7-2.7-4.7H136l8.7-3.6l0.1,6.5c1.1-3.1,4.1-6.3,7.7-6.3c0.9,0,1.8,0.2,2.7,0.7v7.5C154.3,71.8,152.6,70.6,150.8,70.6z"/>
+            <path class="st1" d="M180.8,93.4c-3,0-5.1-1.4-7.7-4.8l-7-9.2v7.9c0,4.8,2.1,5.4,2.5,5.4h-10.7c0.4-0.1,2.5-0.6,2.5-5.4V62.5c0-4.9-1.4-5.7-3.2-5.7h-0.5l9.4-3.5v24.6l7-7.2c1.4-1.4,1.9-2.4,1.9-3.1c0-1.2-1.3-1.5-1.6-1.5h12.2c-0.7,0.2-3.1,1-7.2,4.9l-6.6,6.5l7.9,9.8c3.1,3.8,5.1,4.7,6.4,4.7c0.2,0,0.5,0,0.7-0.1C185.6,92.8,183.6,93.4,180.8,93.4z"/>
+            <path class="st1" d="M199.8,93.6c-8.7,0-12.9-6.8-12.9-13.7c0-7.3,4.7-14.7,13.5-14.7c8.9,0,13.1,6.8,13.1,13.7C213.4,86.1,208.8,93.6,199.8,93.6z M199.5,69.1c-4.6,0-6.8,4.6-6.8,9.5c0,5.4,2.7,11.1,7.9,11.1c4.5,0,6.8-4.7,6.8-9.6C207.5,74.7,204.8,69.1,199.5,69.1z"/>
+            <path class="st1" d="M244,92.7h-10.4c0.4-0.1,2.3-0.6,2.3-5.3V75.6c0-4.2-1.8-6.1-4.3-6.1c-3.1,0-6.3,2.8-6.3,6.5v11.4c0,4.6,1.9,5.2,2.4,5.3H217c0.5-0.1,2.6-0.6,2.6-5.3V73.8c0-4.4-1.3-5.1-2.9-5.1H216l9-3.8l0.1,4.7c1.8-2.6,5.7-4.5,8.7-4.5c4.3,0,7.7,2.6,7.7,9v13.1C241.5,92,243.5,92.7,244,92.7z"/>
+            <path class="st1" d="M249.5,66.8c-2.9,0-5.3-2.4-5.3-5.3s2.4-5.3,5.3-5.3c2.9,0,5.3,2.4,5.3,5.3S252.4,66.8,249.5,66.8z M249.5,57.3c-2.3,0-4.2,1.9-4.2,4.2s1.9,4.2,4.2,4.2c2.3,0,4.2-1.9,4.2-4.2S251.7,57.3,249.5,57.3z M251.9,63.5h-1.6l-0.7-1.3c-0.2-0.3-0.3-0.4-0.4-0.4H249v0.9c0,0.8,0.3,0.8,0.4,0.9h-2c0.1,0,0.4-0.1,0.4-0.9v-3c0-0.8-0.4-0.9-0.5-0.9h2.3c1.2,0,1.7,0.7,1.7,1.4c0,0.7-0.5,1.2-1.1,1.3l0.9,1.3C251.5,63.4,251.8,63.5,251.9,63.5z M249.5,59.6H249V61h0.5c0.5,0,0.7-0.4,0.7-0.7C250.2,59.9,250,59.6,249.5,59.6z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="v-question" class="tk-view">
+    <div class="tk-progress" id="tk-progress"></div>
+    <div class="tk-nav">
+      <button class="tk-back" id="tk-back-btn" onclick="tkBack()">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>Tilbake
+      </button>
+      <span class="tk-step-label" id="tk-step-lbl"></span>
+    </div>
+    <h2 class="tk-q" id="tk-q-text"></h2>
+    <div class="tk-answers" id="tk-answers"></div>
+    <div class="tk-quote">
+      <div class="tk-quote-text" id="tk-quote-text"></div>
+      <div class="tk-quote-author" id="tk-quote-author"></div>
+    </div>
+  </div>
+
+  <div id="v-results" class="tk-view">
+    <div class="tk-res-nav">
+      <div class="tk-nav" style="margin-bottom:0">
+        <button class="tk-back" onclick="tkBackFromResults()">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>Tilbake
+        </button>
+      </div>
+    </div>
+    <h2 class="tk-res-label">Her er noen verdener som treffer deg</h2>
+    <p class="tk-res-intro" id="tk-res-intro"></p>
+    <div class="tk-books" id="tk-books"></div>
+    <p class="tk-sec-label">Andre som kanskje passer deg</p>
+    <div class="tk-sec-books" id="tk-sec-books"></div>
+    <div class="tk-bottom tk-bottom-wrap">
+      <button class="tk-reset" onclick="tkReset()">Start på nytt</button>
+      <a class="tk-shop-link" id="tk-shop-href" href="https://tarkon.no/collections/boker" target="_blank">Se hele boksamlingen på tarkon.no →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// Logo scaling
+function scaleLogoToBtn(){
+  const btn=document.getElementById('tk-start-btn'),wrap=document.getElementById('tk-logo-wrap');
+  if(!btn||!wrap)return;
+  const h=btn.offsetHeight;if(!h)return;
+  const tH=Math.round(h*1.4),tW=Math.round(tH*(283.5/141.7));
+  const svg=wrap.querySelector('svg');
+  if(svg){svg.setAttribute('width',tW);svg.setAttribute('height',tH);}
+}
+window.addEventListener('load',scaleLogoToBtn);
+setTimeout(scaleLogoToBtn,150);
+
+// Touch-friendly tooltip toggle – passive:true for iOS compatibility
+document.addEventListener('touchend',function(e){
+  const hb=e.target.closest('.tk-hint-btn');
+  document.querySelectorAll('.tk-hint-wrap.tip-open').forEach(el=>{
+    if(!hb||!el.contains(hb)) el.classList.remove('tip-open');
+  });
+  if(hb){hb.closest('.tk-hint-wrap').classList.toggle('tip-open');}
+},{passive:true});
+
+const ALL_QUOTES=[
+  {q:"«I must not fear. Fear is the mind-killer,\nthe little-death that brings total obliteration.»",a:"Frank Herbert – Dune"},
+  {q:"«He who controls the spice\ncontrols the universe.»",a:"Frank Herbert – Dune"},
+  {q:"«The mystery of life isn't a problem to solve,\nbut a reality to experience.»",a:"Frank Herbert – Dune"},
+  {q:"«Not all those who wander are lost.»",a:"J.R.R. Tolkien – Ringenes herre"},
+  {q:"«Even the smallest person\ncan change the course of the future.»",a:"J.R.R. Tolkien – Ringenes herre"},
+  {q:"«The world is full of peril,\nand in it there are many dark places.»",a:"J.R.R. Tolkien – Ringenes herre"},
+  {q:"«In a hole in the ground there lived a hobbit.\nNot a nasty, dirty, wet hole...»",a:"J.R.R. Tolkien – The Hobbit"},
+  {q:"«It does not do to dwell on dreams\nand forget to live.»",a:"J.K. Rowling – Harry Potter"},
+  {q:"«It is our choices that show what we truly are,\nfar more than our abilities.»",a:"J.K. Rowling – Harry Potter"},
+  {q:"«Words are our most inexhaustible source of magic.»",a:"J.K. Rowling – Harry Potter"},
+  {q:"«The night is dark and full of terrors.»",a:"George R.R. Martin – A Game of Thrones"},
+  {q:"«A reader lives a thousand lives before he dies.\nThe man who never reads lives only one.»",a:"George R.R. Martin"},
+  {q:"«When you play the game of thrones,\nyou win or you die.»",a:"George R.R. Martin – A Game of Thrones"},
+  {q:"«War is peace. Freedom is slavery.\nIgnorance is strength.»",a:"George Orwell – 1984"},
+  {q:"«If you want a picture of the future,\nimagine a boot stamping on a human face – forever.»",a:"George Orwell – 1984"},
+  {q:"«Words can be like X-rays if you use them properly –\nthey'll go through anything.»",a:"Aldous Huxley – Brave New World"},
+  {q:"«There's always another secret.»",a:"Brandon Sanderson – Mistborn"},
+  {q:"«The mists themselves are a warning,\na reminder that the world is not as it seems.»",a:"Brandon Sanderson – Mistborn"},
+  {q:"«Evil is evil. Lesser, greater, middling –\nit's all the same.»",a:"Andrzej Sapkowski – The Last Wish"},
+  {q:"«People like to invent monsters and monstrosities.\nThen they seem less monstrous themselves.»",a:"Andrzej Sapkowski – The Last Wish"},
+  {q:"«Knowledge is the only weapon\nthat doesn't run out of ammunition.»",a:"Rebecca Yarros – Fourth Wing"},
+  {q:"«I am the sword in the darkness.\nI am the watcher on the walls.»",a:"Pierce Brown – Red Rising"},
+  {q:"«There is no place in the universe\nwhere you are more alone than in your own mind.»",a:"Dan Simmons – Hyperion"},
+  {q:"«I am longing to be with you, and by the sea,\nwhere we can talk together freely.»",a:"Bram Stoker – Dracula"},
+  {q:"«It's a dangerous business, going out your door.\nYou step onto the road, and if you don't keep your feet...»",a:"J.R.R. Tolkien – Ringenes herre"}
+];
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+const QUOTES=shuffle(ALL_QUOTES);let qIdx=0;
+function nextQ(){return QUOTES[qIdx++%QUOTES.length];}
+
+const QS=[
+  {text:"Hva er du ute etter?",answers:[
+    {label:"Mørke og intense historier",hint:"Dark fantasy · horror · gothic · grimdark",tags:{dark:3,intense:1}},
+    {label:"Oppslukende og episke verdener",hint:"High fantasy · space opera · store serier",tags:{epic:3,world:1}},
+    {label:"Tankevekkende og annerledes fortellinger",hint:"Klassikere · filosofiske · litterær sci-fi",tags:{literary:3,dark:1}},
+    {label:"Lett å komme inn i og vanskelig å legge fra seg",hint:"Page-turners · YA · tilgjengelig fantasy og sci-fi",tags:{pager:3,char:1}}
+  ]},
+  {text:"Hva trekker deg inn i historiene du liker?",answers:[
+    {label:"Sterke relasjoner og følelser",hint:"Karakterdrevne historier · lojalitet · svik\nEmosjonell investering · sterke protagonister",tags:{char:3,pager:1}},
+    {label:"Verdener og detaljer å fordype seg i",hint:"Worldbuilding · lore · kart · systemer\n«Jeg vil bo der»-følelse",tags:{world:3,epic:1}},
+    {label:"Maktspill, konflikt og strategi",hint:"Politiske intriger · krig · allianser og svik\nHierarkier og maktstrukturer",tags:{epic:2,dark:1,literary:1}},
+    {label:"Mystikk og det ukjente",hint:"Horror · weird fiction · det uforklarlige\nStemningsdrevne historier",tags:{dark:3,literary:1}}
+  ]},
+  {text:"Hvor mye vil du ha å tenke på underveis?",answers:[
+    {label:"Bare la meg bli dratt med",hint:"Rask inngang · lett språk · tydelig driv\nPage-turner uten å være krevende",tags:{pager:3}},
+    {label:"Litt å tenke over underveis",hint:"God flyt og tematikk · lesbar men ikke tom\nKarakterutvikling og ideer",tags:{epic:1,char:1,world:1}},
+    {label:"Noe jeg virkelig kan dykke ned i",hint:"Høy kompleksitet · tyngre tematikk\nKrever mer, belønner mer",tags:{literary:3,dark:1}}
+  ]},
+  {text:"Hva vil du ha mest av i historien din?",answers:[
+    {label:"En verden å forsvinne inn i",hint:"Sterk worldbuilding · atmosfære\nStore universer · mye lore og detaljer",tags:{world:3,epic:1}},
+    {label:"Karakterer du blir opphengt i",hint:"Sterke vennskap · rivaler · kjærlighetshistorier\nEmosjonell investering",tags:{char:3,pager:1}},
+    {label:"Et plott som driver deg videre",hint:"Høy spenning · twists · cliffhangers\nVanskelig å legge fra seg",tags:{pager:3,epic:1}},
+    {label:"En idé eller stemning som blir værende",hint:"Tematikk · atmosfære · originalitet\nSitter igjen lenge etterpå",tags:{literary:3,dark:1}}
+  ]}
+];
+
+function buildIntroText(top){
+  const intros={
+    dark:["Du er ute etter mørkt og intenst. Her er bøker som ikke holder tilbake – fulle av uhygge, spenning og historier som sitter igjen.","Mørke stemninger og intense fortellinger. Disse bøkene trekker deg inn i ubehaget og slipper deg ikke.","Gothic, grimdark og horror – bøker som utforsker det mørke i mennesket og verden rundt det."],
+    epic:["Store verdener, episke konflikter og historier som strekker seg over hundrevis av sider. Her er dine neste reiser.","Du vil ha noe å forsvinne inn i. Disse bøkene gir deg univers du kan leve i lenge etter siste side.","Episke sagaer med politikk, krig og skjebner som henger i balansen. Perfekt for den store lesereisen."],
+    literary:["Bøker som gir deg noe å tenke på lenge etter at du har lagt dem fra deg. Tankevekkende og varig.","Du vil ha noe som utfordrer deg. Disse titlene kombinerer stor litterær kvalitet med ideer som setter seg.","Filosofiske og tankevekkende fortellinger som stiller de store spørsmålene – uten enkle svar."],
+    pager:["Bøker du ikke klarer å legge fra deg. Raskt i gang, umulig å avslutte – perfekt for en helg.","Du vil ha driv og tempo. Disse titlene tar tak fra første side og slipper ikke taket.","Tilgjengelige og engasjerende – bøker som minner deg på hvorfor du liker å lese."],
+    char:["Du husker karakterene lenge etter historien er glemt. Disse bøkene er fulle av slike møter.","Relasjoner, følelser og karakterer du heier på. Her er bøker der menneskene er det viktigste.","Sterke protagonister og uforglemmelige vennskap. Bøker der du investerer alt i karakterene."],
+    world:["Verdener så detaljerte og rike at du vil bo der. Kart, lore og magisystemer som holder deg fanget.","Du vil ha et univers å utforske. Disse titlene gir deg verdener som er minst like viktige som plottet.","Worldbuilding på høyeste nivå – bøker der settingen er like viktig som karakterene."]
+  };
+  const pool=intros[top]||intros.epic;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+const PROFILES={
+  dark:{shop:"https://tarkon.no/collections/how-to-boker-copy",
+    primary:[
+      {title:"Dracula",author:"Bram Stoker",genre:"Gotisk horror",isbn:"9780141439846",color:"#2c1810",desc:"Den klassiske vampyrromanen. Mørk, atmosfærisk og tidløs.",exp:"Brevromanen fra 1897 er selve grunnsteinen i vampyrsjangeren. Graf Dracula er like uhyggelig i dag – full av gotisk stemning og eksistensielt mørke.",url:"https://tarkon.no/products/dracula-clothbound-classics"},
+      {title:"Carmilla",author:"J. Sheridan Le Fanu",genre:"Gotisk horror",isbn:"9780140436891",color:"#2c1810",desc:"Den gotiske vampyrfortellingen som inspirerte Dracula.",exp:"En av gotisk litteraturs viktigste tekster. Carmilla er mystisk, feminin og dypt uhyggelig.",url:"https://tarkon.no/products/carmilla"},
+      {title:"Haunting of Hill House",author:"Shirley Jackson",genre:"Psykologisk horror",isbn:"9780143039983",color:"#2c1810",desc:"Psykologisk horror på sitt fineste. Ubehaget sitter i veggene.",exp:"Shirley Jacksons mesterverk om fire mennesker som utforsker et hjemsøkt hus.",url:"https://tarkon.no/products/haunting-of-hill-house"},
+      {title:"Hell House",author:"Richard Matheson",genre:"Horror",isbn:"9780312868826",color:"#2c1810",desc:"Et hjemsøkt hus med ekstraordinær intensitet.",exp:"Mathesons mest skremmende roman. Fire etterforsker Belasco House – og huset kjemper tilbake.",url:"https://tarkon.no/products/hell-house"},
+      {title:"Carrie",author:"Stephen King",genre:"Psykologisk horror",isbn:"9780307743664",color:"#2c1810",desc:"En jentes hevn og en bys undergang. King på sitt mørkeste.",exp:"Kings debutroman om mobbing, makt og hevn er like relevant i dag som da den kom ut.",url:"https://tarkon.no/products/carrie"},
+      {title:"Empire of the Vampire",author:"Jay Kristoff",genre:"Grimdark fantasy",isbn:"9780008350918",color:"#2c1810",desc:"En vampyrjeger forteller sin siste historie. Episk og grusom.",exp:"Bok 1 i en mørk episk vampyr-saga. Gabriel de Leon er den siste jageren i en verden dominert av udøde.",url:"https://tarkon.no/products/empire-of-the-vampire-bok-1"}
+    ],
+    secondary:[
+      {title:"The Poppy War",author:"R.F. Kuang",genre:"Grimdark",isbn:"9780062662590",color:"#2c1810",desc:"Krig, magi og tragedie basert på kinesisk historie.",url:"https://tarkon.no/products/blood-of-the-chosen"},
+      {title:"Mexican Gothic",author:"Silvia Moreno-Garcia",genre:"Gotisk horror",isbn:"9780525620785",color:"#2c1810",desc:"Gotisk horror i 1950-tallets Mexico.",url:"https://tarkon.no/products/mexican-gothic"},
+      {title:"A Game of Thrones",author:"George R.R. Martin",genre:"Grimdark fantasy",isbn:"9780553573404",color:"#2c1810",desc:"Ingen er trygge. Maktspill i Westeros.",url:"https://tarkon.no/products/a-game-of-thrones-bok-1"},
+      {title:"Dead Zone",author:"Stephen King",genre:"Psykologisk thriller",isbn:"9781501192326",color:"#2c1810",desc:"En mann våkner fra koma – og kan se fremtiden.",url:"https://tarkon.no/products/dead-zone"}
+    ]},
+  epic:{shop:"https://tarkon.no/collections/boker",
+    primary:[
+      {title:"Dune",author:"Frank Herbert",genre:"Space opera",isbn:"9780340960196",color:"#1a2030",desc:"Et galaktisk epos om makt, religion og ressurser.",exp:"En av de mest innflytelsesrike sci-fi-romanene noensinne. Herbert bygde et univers med egne religioner og full økologi.",url:"https://tarkon.no/products/dune"},
+      {title:"The Eye of the World",author:"Robert Jordan",genre:"High fantasy",isbn:"9780765345424",color:"#1a2030",desc:"Wheel of Time bok 1. En av fantasylitteraturens store sagaer.",exp:"Rand al'Thor forlater Emond's Field og møter en verden større og farligere enn han kunne forestille seg.",url:"https://tarkon.no/products/the-eye-of-the-world-bok-1-fra-the-wheel-of-time"},
+      {title:"Gardens of the Moon",author:"Steven Erikson",genre:"Grimdark fantasy",isbn:"9780765348784",color:"#1a2030",desc:"Malazan – episk fantasy på sitt mest ambisiøse.",exp:"Bok 1 i Malazan Book of the Fallen. Krevende, men enormt belønende.",url:"https://tarkon.no/products/gardens-of-the-moon-malazan-book-of-the-fallen-1"},
+      {title:"A Game of Thrones",author:"George R.R. Martin",genre:"Grimdark fantasy",isbn:"9780553573404",color:"#1a2030",desc:"Ingen er trygge. Maktspill og konsekvenser i Westeros.",exp:"Bok 1 i A Song of Ice and Fire. Martin snudde fantasysjangeren på hodet.",url:"https://tarkon.no/products/a-game-of-thrones-bok-1"},
+      {title:"Hyperion",author:"Dan Simmons",genre:"Space opera",isbn:"9780385249492",color:"#1a2030",desc:"Sju pilegrimer på vei mot en uforutsigbar skjebne.",exp:"Bok 1 i Hyperion Cantos. Fortalt som Canterbury Tales i verdensrommet.",url:"https://tarkon.no/products/hyperion"},
+      {title:"The Hobbit",author:"J.R.R. Tolkien",genre:"High fantasy",isbn:"9780261102217",color:"#1a2030",desc:"Der eventyr begynner. En hobbits uventede reise.",exp:"Tolkiens første bok i Midgard-universet. Perfekt inngangsport til den mest elskede fantasyverdenen.",url:"https://tarkon.no/products/the-hobbit"}
+    ],
+    secondary:[
+      {title:"The Fellowship of the Ring",author:"J.R.R. Tolkien",genre:"High fantasy",isbn:"9780261103573",color:"#1a2030",desc:"Den ultimate fantasireisen starter her.",url:"https://tarkon.no/products/the-fellowship-of-the-ring-bok-1"},
+      {title:"Foundation",author:"Isaac Asimov",genre:"Space opera",isbn:"9780008117498",color:"#1a2030",desc:"Et galaktisk sivilisasjonskollaps forutsagt av én mann.",url:"https://tarkon.no/products/foundation-bok-1"},
+      {title:"The Three-Body Problem",author:"Liu Cixin",genre:"Hard sci-fi",isbn:"9780765382030",color:"#1a2030",desc:"Kinas svar på det store spørsmålet om kontakt.",url:"https://tarkon.no/products/the-three-body-problem"},
+      {title:"Red Rising",author:"Pierce Brown",genre:"Sci-fi",isbn:"9780345539809",color:"#1a2030",desc:"Darrow infiltrerer eliten for å ødelegge den innenfra.",url:"https://tarkon.no/products/red-rising"}
+    ]},
+  literary:{shop:"https://tarkon.no/collections/science-fiction-boker",
+    primary:[
+      {title:"Dune Messiah",author:"Frank Herbert",genre:"Filosofisk sci-fi",isbn:"9780593098233",color:"#1e1e28",desc:"Paul Atreides møter konsekvensene av sin seier.",exp:"En selvstendig utforskning av hva makt gjør med et menneske.",url:"https://tarkon.no/products/dune-messiah-bok-2"},
+      {title:"Frankenstein",author:"Mary Shelley",genre:"Gotisk / filosofisk",isbn:"9780141439471",color:"#1e1e28",desc:"Det moderne monsteret. Shelley om skapelse og ansvar.",exp:"En av litteraturens viktigste romaner om ansvar, ensomhet og hva det vil si å skape liv.",url:"https://tarkon.no/products/frankenstein-2"},
+      {title:"Kindred",author:"Octavia E. Butler",genre:"Litterær sci-fi",isbn:"9780807083697",color:"#1e1e28",desc:"Tidreiser til slaveriet i USA. Hjerteskjærende og nødvendig.",exp:"Dana reiser ufrivillig tilbake til slaveriet. Butler skriver med en rå, direkte kraft.",url:"https://tarkon.no/products/kindred"},
+      {title:"1984",author:"George Orwell",genre:"Dystopi",isbn:"9780451524935",color:"#1e1e28",desc:"Overvåkning, kontroll og sannhetens erosjon. Alltid aktuell.",exp:"Orwells dystopiske mesterverk fra 1949 er mer relevant enn noensinne.",url:"https://tarkon.no/products/1984-the-dystopian-classic-reimagined"},
+      {title:"Brave New World",author:"Aldous Huxley",genre:"Dystopi",isbn:"9780060850524",color:"#1e1e28",desc:"En verden uten lidelse – og uten mening.",exp:"Frivillig overgivelse av frihet er problemet, ikke tvang. En tidløs advarsel.",url:"https://tarkon.no/products/brave-new-world"},
+      {title:"The Fifth Season",author:"N.K. Jemisin",genre:"Litterær fantasy",isbn:"9780316229296",color:"#1e1e28",desc:"Hugo-vinner. Fortalt i andre person. Endrer deg.",exp:"Bok 1 i Broken Earth-trilogien. Jemisin vant tre Hugo-priser på rad.",url:"https://tarkon.no/products/the-fifth-season-the-broken-earth-bok-1"}
+    ],
+    secondary:[
+      {title:"Fahrenheit 451",author:"Ray Bradbury",genre:"Dystopi",isbn:"9781451673319",color:"#1e1e28",desc:"Bøkene brenner. Men tankene overlever.",url:"https://tarkon.no/products/fahrenheit-451"},
+      {title:"Slaughterhouse-Five",author:"Kurt Vonnegut",genre:"Litterær fiksjon",isbn:"9780385333481",color:"#1e1e28",desc:"Vonnegut om krig, tid og det absurde livet.",url:"https://tarkon.no/products/slaughterhouse-5"},
+      {title:"Babel",author:"R.F. Kuang",genre:"Historisk fantasy",isbn:"9780063021426",color:"#1e1e28",desc:"Oxford, imperialisme og magi.",url:"https://tarkon.no/products/babel-or-the-necessity-of-violence-an-arcane-history-of-the-oxford-translators-revolution"},
+      {title:"Children of Time",author:"Adrian Tchaikovsky",genre:"Litterær sci-fi",isbn:"9781447273301",color:"#1e1e28",desc:"Hva skjer med sivilisasjon uten mennesker?",url:"https://tarkon.no/products/children-of-time"}
+    ]},
+  pager:{shop:"https://tarkon.no/collections/boker",
+    primary:[
+      {title:"Harry Potter and the Philosopher's Stone",author:"J.K. Rowling",genre:"Fantasy",isbn:"9780747532699",color:"#2a1520",desc:"Der det hele begynner. Magi, vennskap og mot.",exp:"Bok 1 i en av historiens mest elskede serier. Harry Potter oppdager at han er en tryllekunstner.",url:"https://tarkon.no/products/harry-potter-and-the-philosophers-stone-bok-1"},
+      {title:"Fourth Wing",author:"Rebecca Yarros",genre:"Romantasy",isbn:"9780349437019",color:"#2a1520",desc:"Krigskollegium, dragere og kjemi som ikke slipper taket.",exp:"Violet Sorrengail sendes til Basgiath War College der nesten alle dør.",url:"https://tarkon.no/products/fourth-wing"},
+      {title:"Shadow and Bone",author:"Leigh Bardugo",genre:"Fantasy",isbn:"9781250027436",color:"#2a1520",desc:"Et magisk skille mellom lys og mørke. Grisha bok 1.",exp:"Alina Starkov oppdager en evne som kan redde landet fra et mørke som har delt det i generasjoner.",url:"https://tarkon.no/products/shadow-and-bone-shadow-and-bone-bok-1"},
+      {title:"A Court of Thorns and Roses",author:"Sarah J. Maas",genre:"Romantasy",isbn:"9781619634442",color:"#2a1520",desc:"Faerie, mørk magi og en kjærlighet som koster alt.",exp:"Feyre dreper en ulv i skogen – og det viser seg å være en fae.",url:"https://tarkon.no/products/a-court-of-thorns-and-roses"},
+      {title:"The Hunger Games",author:"Suzanne Collins",genre:"YA dystopi",isbn:"9780439023481",color:"#2a1520",desc:"Katniss mot systemet. Rask, brutal og umulig å stoppe.",exp:"Katniss melder seg frivillig for søsteren sin og går inn i en kamp på liv og død.",url:"https://tarkon.no/products/the-hunger-games"},
+      {title:"The Martian",author:"Andy Weir",genre:"Sci-fi",isbn:"9780553418026",color:"#2a1520",desc:"En mann alene på Mars. Problem-solving på høyt nivå.",exp:"Mark Watney sitter fast på Mars uten redning i sikte. Underholdende og teknisk imponerende.",url:"https://tarkon.no/products/the-martian"}
+    ],
+    secondary:[
+      {title:"Red Rising",author:"Pierce Brown",genre:"Sci-fi",isbn:"9780345539809",color:"#2a1520",desc:"Darrow infiltrerer eliten for å ødelegge den innenfra.",url:"https://tarkon.no/products/red-rising"},
+      {title:"House of Earth and Blood",author:"Sarah J. Maas",genre:"Romantasy",isbn:"9781635574074",color:"#2a1520",desc:"Crescent City – urban fantasy med stor emosjonell tyngde.",url:"https://tarkon.no/products/house-of-earth-and-blood"},
+      {title:"Project Hail Mary",author:"Andy Weir",genre:"Sci-fi",isbn:"9780593135204",color:"#2a1520",desc:"En mann våkner alene i verdensrommet – og husker ingenting.",url:"https://tarkon.no/products/project-hail-mary"},
+      {title:"Good Omens",author:"Terry Pratchett / Neil Gaiman",genre:"Humoristisk fantasy",isbn:"9780060853983",color:"#2a1520",desc:"En engel og en demon prøver å avverge dommedag.",url:"https://tarkon.no/products/good-omens"}
+    ]},
+  char:{shop:"https://tarkon.no/collections/fantasy-boker",
+    primary:[
+      {title:"Fourth Wing",author:"Rebecca Yarros",genre:"Romantasy",isbn:"9780349437019",color:"#1a1020",desc:"Dramatiske relasjoner og dragere. Karakterkjemi i særklasse.",exp:"Violet og Xaden er et av de mest diskuterte parene i nyere fantasy.",url:"https://tarkon.no/products/fourth-wing"},
+      {title:"A Court of Thorns and Roses",author:"Sarah J. Maas",genre:"Romantasy",isbn:"9781619634442",color:"#1a1020",desc:"Feyre og Tamlin. En kjærlighet med mørke konsekvenser.",exp:"ACOTAR bok 1. Sarah J. Maas er mester på karakterkjemi og emosjonell investering.",url:"https://tarkon.no/products/a-court-of-thorns-and-roses"},
+      {title:"Six of Crows",author:"Leigh Bardugo",genre:"Fantasy",isbn:"9781250076960",color:"#1a1020",desc:"Et knippe med outsidere. Ensemble-cast på sitt beste.",exp:"Kaz Brekker og fem andre skal gjøre det umulige. Bardugo er eksepsjonelt god på karakterer.",url:"https://tarkon.no/products/six-of-crows-bok-1"},
+      {title:"The Night Circus",author:"Erin Morgenstern",genre:"Magisk realisme",isbn:"9780307744432",color:"#1a1020",desc:"Et magisk sirkus. En kjærlighet som former verden.",exp:"To rivaliserende magikers kjærlighetshistorie i et sort-hvitt sirkus. Atmosfærisk og uforglemmelig.",url:"https://tarkon.no/products/the-night-circus"},
+      {title:"Divine Rivals",author:"Rebecca Ross",genre:"Romantasy",isbn:"9781250897695",color:"#1a1020",desc:"Brev mellom rivaler på tvers av en krig. Romantisk og rørende.",exp:"Iris og Roman er journalistrivaler som skriver anonyme brev til hverandre.",url:"https://tarkon.no/products/divine-rivals"},
+      {title:"Assassin's Apprentice",author:"Robin Hobb",genre:"High fantasy",isbn:"9780553573411",color:"#1a1020",desc:"Fitz – en av fantasylitteraturens mest menneskelige helter.",exp:"FitzChivalry Farseer er en kongelig bastard som læres opp som morder. Robin Hobb skriver karakterer med sjelden dybde.",url:"https://tarkon.no/products/assassins-apprentice-bok-1"}
+    ],
+    secondary:[
+      {title:"House of Earth and Blood",author:"Sarah J. Maas",genre:"Romantasy",isbn:"9781635574074",color:"#1a1020",desc:"Bryce Quinlan – en av fantasy-sjangernes sterkeste protagonister.",url:"https://tarkon.no/products/house-of-earth-and-blood"},
+      {title:"Shadow and Bone",author:"Leigh Bardugo",genre:"Fantasy",isbn:"9781250027436",color:"#1a1020",desc:"Alina Starkov – fra usynlig til udødelig.",url:"https://tarkon.no/products/shadow-and-bone-shadow-and-bone-bok-1"},
+      {title:"The Name of the Wind",author:"Patrick Rothfuss",genre:"Dark fantasy",isbn:"9780756404741",color:"#1a1020",desc:"Kvothe forteller sin legende. Et karakterportrett uten like.",url:"https://tarkon.no/products/the-name-of-the-wind"},
+      {title:"Red Rising",author:"Pierce Brown",genre:"Sci-fi",isbn:"9780345539809",color:"#1a1020",desc:"Darrow er en av sci-fis mest minneverdige helter.",url:"https://tarkon.no/products/red-rising"}
+    ]},
+  world:{shop:"https://tarkon.no/collections/boker",
+    primary:[
+      {title:"Dune",author:"Frank Herbert",genre:"Space opera",isbn:"9780340960196",color:"#2c3e1a",desc:"Arrakis er en av litteraturens mest gjennomarbeidede verdener.",exp:"Herbert bygde et galaktisk univers med egne religioner og full økologi.",url:"https://tarkon.no/products/dune"},
+      {title:"The Fellowship of the Ring",author:"J.R.R. Tolkien",genre:"High fantasy",isbn:"9780261103573",color:"#2c3e1a",desc:"Midgard er den ultimate fantasy-verdenen. Start her.",exp:"Tolkien skapte språk, historier og geografi over tiår. Hvert oppslag åpner nye lag av en verden.",url:"https://tarkon.no/products/the-fellowship-of-the-ring-bok-1"},
+      {title:"The Way of Kings",author:"Brandon Sanderson",genre:"Epic fantasy",isbn:"9780765326355",color:"#2c3e1a",desc:"Roshar – ett av fantasylitteraturens rikeste univers.",exp:"Stormlight Archive bok 1. Roshar er en verden med eget vær, flora og civilisasjoner.",url:"https://tarkon.no/products/the-way-of-kings"},
+      {title:"Mistborn: The Final Empire",author:"Brandon Sanderson",genre:"Epic fantasy",isbn:"9780765311788",color:"#2c3e1a",desc:"Scadrial – en dystopisk verden ned til minste detalj.",exp:"Bok 1 i Mistborn. Sandersons magisystem Allomancy er et av litteraturens mest originale.",url:"https://tarkon.no/products/mistborn-the-final-empire"},
+      {title:"The Eye of the World",author:"Robert Jordan",genre:"High fantasy",isbn:"9780765345424",color:"#2c3e1a",desc:"Wheel of Time bok 1. Den episke reisen begynner.",exp:"Jordan skapte et av fantasylitteraturens mest detaljerte univers over 14 bøker.",url:"https://tarkon.no/products/the-eye-of-the-world-bok-1-fra-the-wheel-of-time"},
+      {title:"The Silmarillion",author:"J.R.R. Tolkien",genre:"Mytologi",isbn:"9780261102736",color:"#2c3e1a",desc:"Midgards skapelsesberetning. Tolkien på sitt mest mytologiske.",exp:"For den som vil forstå Midgard i dybden. Tolkiens egne mytologiske samling.",url:"https://tarkon.no/products/the-silmarillion-pocket"}
+    ],
+    secondary:[
+      {title:"The Hobbit",author:"J.R.R. Tolkien",genre:"High fantasy",isbn:"9780261102217",color:"#2c3e1a",desc:"Midgards mest gjestfrie inngangsport.",url:"https://tarkon.no/products/the-hobbit"},
+      {title:"The Lord of the Rings",author:"J.R.R. Tolkien",genre:"High fantasy",isbn:"9780261103252",color:"#2c3e1a",desc:"Det komplette verket i ett bind. Tidløst.",url:"https://tarkon.no/products/the-lord-of-the-rings"},
+      {title:"Gardens of the Moon",author:"Steven Erikson",genre:"Grimdark fantasy",isbn:"9780765348784",color:"#2c3e1a",desc:"Malazan – episk fantasy på sitt mest ambisiøse.",url:"https://tarkon.no/products/gardens-of-the-moon-malazan-book-of-the-fallen-1"},
+      {title:"Hyperion",author:"Dan Simmons",genre:"Space opera",isbn:"9780385249492",color:"#2c3e1a",desc:"Sju pilegrimer på vei mot en uforutsigbar skjebne.",url:"https://tarkon.no/products/hyperion"}
+    ]}
+};
+
+let cur=0,scores={},picks=[];
+function tkShow(id){document.querySelectorAll('.tk-view').forEach(v=>v.classList.remove('on','tk-fade'));const el=document.getElementById(id);el.classList.add('on','tk-fade');}
+function tkStart(){cur=0;scores={dark:0,epic:0,literary:0,pager:0,char:0,world:0,intense:0};picks=[];tkRenderQ();tkShow('v-question');}
+function tkReset(){tkShow('v-intro');setTimeout(scaleLogoToBtn,80);}
+function tkBack(){if(cur===0){tkShow('v-intro');setTimeout(scaleLogoToBtn,80);return;}cur--;picks.pop();rebuildScores();tkRenderQ();}
+function tkBackFromResults(){cur=QS.length-1;picks.pop();rebuildScores();tkRenderQ();tkShow('v-question');}
+function rebuildScores(){scores={dark:0,epic:0,literary:0,pager:0,char:0,world:0,intense:0};picks.forEach(t=>Object.entries(t).forEach(([k,v])=>{scores[k]=(scores[k]||0)+v;}));}
+
+function tkRenderQ(){
+  const q=QS[cur],qt=nextQ();
+  document.getElementById('tk-step-lbl').textContent=`${cur+1} / ${QS.length}`;
+  document.getElementById('tk-q-text').textContent=q.text;
+  document.getElementById('tk-back-btn').style.visibility=cur===0?'hidden':'visible';
+  document.getElementById('tk-quote-text').innerHTML=qt.q.replace(/\n/g,'<br>');
+  document.getElementById('tk-quote-author').textContent='— '+qt.a;
+  const prog=document.getElementById('tk-progress');prog.innerHTML='';
+  QS.forEach((_,i)=>{const d=document.createElement('div');d.className='tk-dot'+(i<cur?' done':i===cur?' active':'');prog.appendChild(d);});
+  const cont=document.getElementById('tk-answers');cont.innerHTML='';
+  q.answers.forEach(a=>{
+    const isSel=picks[cur]&&JSON.stringify(picks[cur])===JSON.stringify(a.tags);
+    const row=document.createElement('div');row.className='tk-answer-row';
+    const btn=document.createElement('button');btn.className='tk-answer-btn'+(isSel?' sel':'');btn.textContent=a.label;btn.onclick=()=>tkPick(a.tags);
+    const hw=document.createElement('div');hw.className='tk-hint-wrap';
+    hw.innerHTML=`<button class="tk-hint-btn" aria-label="Hint"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/><circle cx="10" cy="14.5" r="1" fill="currentColor" stroke="none"/><path d="M7.5 7.8c0-1.8 4.5-1.8 4.5 0.8C12 10.5 10 11 10 12.5"/></svg></button><div class="tk-tooltip">${a.hint.replace(/\n/g,'<br>')}</div>`;
+    row.appendChild(btn);row.appendChild(hw);cont.appendChild(row);
+  });
+}
+
+function tkPick(tags){picks[cur]=tags;rebuildScores();cur++;if(cur<QS.length){tkRenderQ();}else{tkShowResults();}}
+
+function mkCover(b,isPrimary){
+  const frame=document.createElement('div');
+  frame.className=isPrimary?'tk-cover-frame':'tk-sec-cover-frame';
+  const inner=document.createElement('div');
+  inner.className=isPrimary?'tk-cover-inner':'tk-sec-cover-inner';
+  const fb=document.createElement('div');fb.className='tk-book-cover-fb';fb.style.background=b.color;fb.textContent=b.title;inner.appendChild(fb);
+  if(b.isbn){
+    const img=new Image();
+    img.alt=b.title;
+    img.crossOrigin='anonymous';
+    // Timeout fallback – if image hasn't loaded in 4s, keep the colour placeholder
+    const t=setTimeout(()=>{img.src='';},4000);
+    img.onload=()=>{
+      clearTimeout(t);
+      img.className='tk-book-cover';
+      inner.innerHTML='';
+      inner.appendChild(img);
+    };
+    img.onerror=()=>{clearTimeout(t);}; // silently keep placeholder
+    img.src=`https://covers.openlibrary.org/b/isbn/${b.isbn}-L.jpg?default=false`;
+  }
+  frame.appendChild(inner);
+  return frame;
+}
+
+function tkShowResults(){
+  const top=Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+  const prof=PROFILES[top]||PROFILES.epic;
+  document.getElementById('tk-res-intro').textContent=buildIntroText(top);
+  document.getElementById('tk-shop-href').href=prof.shop;
+  const booksEl=document.getElementById('tk-books');booksEl.innerHTML='';
+  prof.primary.forEach((b,i)=>{
+    const card=document.createElement('a');card.className='tk-book';card.href=b.url;card.target='_blank';
+    const expId=`bexp-${i}`;
+    const body=document.createElement('div');body.className='tk-book-body';
+    const exp=b.exp?`<button class="tk-book-more" onclick="togBook(event,'${expId}',this)">Les mer</button><div class="tk-book-expanded" id="${expId}">${b.exp}</div>`:'';
+    body.innerHTML=`<div class="tk-book-genre">${b.genre}</div><div class="tk-book-title">${b.title}</div><div class="tk-book-author">${b.author}</div><div class="tk-book-desc">${b.desc}</div>${exp}`;
+    card.appendChild(mkCover(b,true));card.appendChild(body);booksEl.appendChild(card);
+  });
+  const secEl=document.getElementById('tk-sec-books');secEl.innerHTML='';
+  prof.secondary.forEach(b=>{
+    const card=document.createElement('a');card.className='tk-sec-book';card.href=b.url;card.target='_blank';
+    const body=document.createElement('div');body.className='tk-sec-body';
+    body.innerHTML=`<div class="tk-sec-genre">${b.genre}</div><div class="tk-sec-title">${b.title}</div><div class="tk-sec-author">${b.author}</div><div class="tk-sec-desc">${b.desc}</div>`;
+    card.appendChild(mkCover(b,false));card.appendChild(body);secEl.appendChild(card);
+  });
+  tkShow('v-results');
+}
+function togBook(e,id,btn){e.preventDefault();e.stopPropagation();const el=document.getElementById(id);el.classList.toggle('open');btn.textContent=el.classList.contains('open')?'Lukk':'Les mer';}
+</script>
+</body>
+</html>
